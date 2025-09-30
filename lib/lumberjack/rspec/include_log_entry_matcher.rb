@@ -19,7 +19,8 @@ class Lumberjack::RSpec::IncludeLogEntryMatcher
     @logger = actual
     return false unless valid_logger?
 
-    @logger.device.include?(@expected_hash)
+    device = @logger.is_a?(Lumberjack::Device::Test) ? @logger : @logger.device
+    device.include?(@expected_hash)
   end
 
   # Generate a failure message when the matcher fails.
@@ -27,7 +28,7 @@ class Lumberjack::RSpec::IncludeLogEntryMatcher
   # @return [String] A formatted failure message.
   def failure_message
     if valid_logger?
-      formatted_failure_message(@logger.device, @expected_hash)
+      formatted_failure_message(@logger, @expected_hash)
     else
       wrong_object_type_message(@logger)
     end
@@ -38,7 +39,7 @@ class Lumberjack::RSpec::IncludeLogEntryMatcher
   # @return [String] A formatted failure message for negated expectations.
   def failure_message_when_negated
     if valid_logger?
-      formatted_negated_failure_message(@logger.device, @expected_hash)
+      formatted_negated_failure_message(@logger, @expected_hash)
     else
       wrong_object_type_message(@logger)
     end
@@ -57,6 +58,7 @@ class Lumberjack::RSpec::IncludeLogEntryMatcher
   #
   # @return [Boolean] True if the logger is a Lumberjack::Device::Test.
   def valid_logger?
+    return true if @logger.is_a?(Lumberjack::Device::Test)
     return false unless @logger.respond_to?(:device)
 
     @logger.device.is_a?(Lumberjack::Device::Test)
@@ -77,10 +79,11 @@ class Lumberjack::RSpec::IncludeLogEntryMatcher
 
   # Generate a detailed failure message showing expected vs actual logs.
   #
-  # @param device [Lumberjack::Device::Test] The logger device.
+  # @param logger_or_device [Lumberjack::Device::Test] The logger device.
   # @param expected_hash [Hash] The expected log entry attributes.
   # @return [String] A formatted failure message with context.
-  def formatted_failure_message(device, expected_hash)
+  def formatted_failure_message(logger_or_device, expected_hash)
+    device = logger_or_device.respond_to?(:device) ? logger_or_device.device : logger_or_device
     message = +"expected logs to include entry:\n" \
       "#{Lumberjack::Device::Test.formatted_expectation(expected_hash, indent: 2)}"
 
@@ -104,10 +107,11 @@ class Lumberjack::RSpec::IncludeLogEntryMatcher
 
   # Generate a failure message for negated expectations.
   #
-  # @param device [Lumberjack::Device::Test] The logger to check.
+  # @param logger_or_device [Lumberjack::Device::Test] The logger to check.
   # @param expected_hash [Hash] The expected log entry attributes that should not be present.
   # @return [String] A formatted failure message for negated expectations.
-  def formatted_negated_failure_message(device, expected_hash)
+  def formatted_negated_failure_message(logger_or_device, expected_hash)
+    device = logger_or_device.respond_to?(:device) ? logger_or_device.device : logger_or_device
     message = "expected logs not to include entry:\n" \
       "#{Lumberjack::Device::Test.formatted_expectation(expected_hash, indent: 2)}"
 

@@ -53,7 +53,7 @@ RSpec.describe Lumberjack::RSpec::IncludeLogEntryMatcher do
 
       it "includes closest match information when available" do
         # Create a logger with no matching entries
-        empty_logger = Lumberjack::Logger.new(:test, level: :info)
+        empty_logger = Lumberjack::Logger.new(:test, severity: :info)
         logger.device = empty_logger.device
         logger.info("different message")
 
