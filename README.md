@@ -8,17 +8,17 @@ This gem provides an RSpec matcher for making assertions about log entries writt
 
 It allows you to easily verify that specific log entries were created during the execution of your code.
 
-### Do I really need this?
+### Why should I test log entries?
 
-Yes! Logging is an important part of any server based application, and observability __is__ a product feature.
+Logging is an important part of any server based application, and observability __is__ a product feature.
 
-You don't need to test every log entry. However, where you have important events being logged that impact monitors, statistics, or business decisions, you should definitely be testing that those log entries are created as expected.
-
-Having tests for these kinds of log entries documents the log entries as important and prevents regressions that can impact your application observability.
+You don't need to test every log entry. However, where you have important events being logged that impact monitors, metrics, or business decisions, those become critical application functionality. You should definitely be testing that those log entries are created as expected to prevent regressions.
 
 The functionality for testing logs is included in the main [lumberjack](https://github.com/bdurand/lumberjack) gem. This gem provides RSpec syntactic sugar to allow writing more natural tests with better failure messages.
 
 ## Usage
+
+### Setup
 
 Require the rspec file in your test helper.
 
@@ -29,11 +29,26 @@ require "lumberjack/rspec"
 In order to use this gem, the logger being tested must be a `Lumberjack::Logger` instance and must use the `Lumberjack::Device::Test` device for output.
 
 ```ruby
-logger = Lumberjack::Logger.new(:test)
+Application.logger = Lumberjack::Logger.new(:test) # or whatever your application needs to do to set up the logger
 ```
 
 > [!TIP]
-> If you cannot modify the logger in your test environment to use a test device, you can use the [lumberjack_capture_device](https://github.com/bdurand/lumberjack_capture_device) gem to capture logs within a block to a test device.
+> If you are using Rails, then you should use the [lumberjack_rails](https://github.com/bdurand/lumberjack_rails) gem and set the `lumberjack.device` to `:test` in your config/environments/test.rb file.
+
+> [!IMPORTANT]
+> You **must** clear logs between tests to avoid false positives since the logger is a persistent shared resource. You can clear the logs by calling `flush`.
+
+You would typically set up clearing the logs in your RSpec configuration with a `before` hook.
+
+```ruby
+RSpec.configure do |config|
+  config.before do
+    Application.logger.flush
+  end
+end
+```
+
+### Assertions
 
 You can make assertions about what has been logged using the `include_log_entry` matcher.
 

@@ -4,7 +4,7 @@ Gem::Specification.new do |spec|
   spec.authors = ["Brian Durand"]
   spec.email = ["bbdurand@gmail.com"]
 
-  spec.summary = "RSpec matchers and helpers for testing the lumberjack gem."
+  spec.summary = "RSpec helpers for testing loggers using the lumberjack gem."
   spec.homepage = "https://github.com/bdurand/lumberjack_rspec"
   spec.license = "MIT"
 
