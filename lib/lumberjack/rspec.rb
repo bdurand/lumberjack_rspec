@@ -25,6 +25,12 @@ end
 
 require_relative "rspec/include_log_entry_matcher"
 
-::RSpec.configure do |config|
-  config.include Lumberjack::RSpec
+begin
+  require "rspec/core"
+
+  ::RSpec.configure do |config|
+    config.include Lumberjack::RSpec
+  end
+rescue LoadError
+  # RSpec is not available, so we can't include the RSpec helpers.
 end

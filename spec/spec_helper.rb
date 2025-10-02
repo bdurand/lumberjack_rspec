@@ -2,7 +2,7 @@
 
 require "stringio"
 
-require_relative("../lib/lumberjack_rspec")
+require_relative "../lib/lumberjack_rspec"
 
 Lumberjack.deprecation_mode = :raise
 
