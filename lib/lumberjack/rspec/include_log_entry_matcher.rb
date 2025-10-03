@@ -97,8 +97,9 @@ class Lumberjack::RSpec::IncludeLogEntryMatcher
     message << "\n\nLogged #{entries.length} #{(entries.length == 1) ? "entry" : "entries"}"
     if entries.length > 0
       message << "\n----------------------\n"
+      template = Lumberjack::TestLogTemplate.new
       entries.each do |entry|
-        message << "#{Lumberjack::Device::Test.formatted_entry(entry)}\n"
+        message << "#{template.call(entry)}\n"
       end
     end
 
