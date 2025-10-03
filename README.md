@@ -12,7 +12,7 @@ It allows you to easily verify that specific log entries were created during the
 
 Logging is an important part of any server based application, and observability __is__ a product feature.
 
-You don't need to test every log entry. However, where you have important events being logged that impact monitors, metrics, or business decisions, those become critical application functionality. You should definitely be testing that those log entries are created as expected to prevent regressions.
+You don't need to test every log entry. However, where you have important events being logged that impact monitors, metrics, or business decisions, those become critical application functionality. You should be testing that those log entries are created as expected to prevent regressions.
 
 The functionality for testing logs is included in the main [lumberjack](https://github.com/bdurand/lumberjack) gem. This gem provides RSpec syntactic sugar to allow writing more natural tests with better failure messages.
 
@@ -32,9 +32,6 @@ In order to use this gem, the logger being tested must be a `Lumberjack::Logger`
 Application.logger = Lumberjack::Logger.new(:test) # or whatever your application needs to do to set up the logger
 ```
 
-> [!TIP]
-> If you are using Rails, then you should use the [lumberjack_rails](https://github.com/bdurand/lumberjack_rails) gem and set the `lumberjack.device` to `:test` in your config/environments/test.rb file.
-
 > [!IMPORTANT]
 > You **must** clear logs between tests to avoid false positives since the logger is a persistent shared resource. You can clear the logs by calling `flush`.
 
@@ -47,6 +44,11 @@ RSpec.configure do |config|
   end
 end
 ```
+
+> [!TIP]
+> If you are using Rails, then you should use the [lumberjack_rails](https://github.com/bdurand/lumberjack_rails_rspec) gem.
+>
+> It handles setting up and clearing the logger for you.
 
 ### Assertions
 
